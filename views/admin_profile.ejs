@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Profile</title>
+  <link rel="stylesheet" href="/css/comp_style.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <style>
+    #selected {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border: 1px solid white;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <div>
+      <h2>Gradious</h2>
+      <div><a href="/comp_dashboard" style="color: white; text-decoration: none;">Assessments</a></div>
+    </div>
+    <div>
+      <div><a href="/add_users" style="color: white; text-decoration: none;">Add Users</a></div>
+      <div id="selected">Profile</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="profile-container">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <%= admin.name.charAt(0).toUpperCase() %>
+        </div>
+        <h1><%= admin.name %></h1>
+        <p>Administrator</p>
+      </div>
+      
+      <div class="profile-details">
+        <div class="detail-section">
+          <h3>Personal Information</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Full Name:</span>
+              <span class="detail-value"><%= profile.name %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Employee ID:</span>
+              <span class="detail-value"><%= profile.emp_id %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value"><%= profile.email %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Gender:</span>
+              <span class="detail-value"><%= profile.gender %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value"><%= profile.phone %></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Date of Joining:</span>
+              <span class="detail-value"><%= new Date(profile.date).toLocaleDateString() %></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>System Statistics</h3>
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-number"><%= stats.totalAssessments %></div>
+              <div class="stat-label">Total Assessments</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number"><%= stats.publishedAssessments %></div>
+              <div class="stat-label">Published</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number"><%= stats.totalUsers %></div>
+              <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number"><%= stats.totalEmployees %></div>
+              <div class="stat-label">Employees</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Recent Activity</h3>
+          <div class="detail-grid">
+            <% if (stats.recentAssessments && stats.recentAssessments.length > 0) { %>
+              <% stats.recentAssessments.forEach(assessment => { %>
+                <div class="detail-item">
+                  <span class="detail-label"><%= assessment.assessment_name %>:</span>
+                  <span class="detail-value" style="color: <%= assessment.is_published ? '#28a745' : '#dc3545' %>">
+                    <%= assessment.is_published ? 'Published' : 'Draft' %>
+                  </span>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="detail-item">
+                <span class="detail-label">No recent assessments</span>
+                <span class="detail-value">-</span>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <h3>Quick Actions</h3>
+          <a href="/comp_dashboard/create_quiz" class="action-btn">Create New Assessment</a>
+          <a href="/add_users" class="action-btn">Add New User</a>
+          <a href="/comp_dashboard" class="action-btn">Manage Assessments</a>
+          <button class="action-btn" onclick="viewReports()">View Reports</button>
+        </div>
+
+        <div style="text-align: center;">
+          <a href="/comp_dashboard" class="back-btn">Back to Dashboard</a>
+          <button class="edit-btn" onclick="editProfile()">Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function editProfile() {
+      alert('Profile editing functionality will be implemented in the next version.');
+    }
+    
+    function viewReports() {
+      alert('Reports functionality will be implemented in the next version.');
+    }
+  </script>
+</body>
+
+</html>
+

@@ -1,0 +1,46 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+body{
+    background-color:white;
+    
+}
+#header{
+    color: white;
+    text-align: center;
+    font-size: xx-large;
+    padding-top: 8px;
+    height: 50px;
+    background-color:#001242;
+}
+#vertical_line{
+    border: 2px solid #001242;
+    min-height: 89.8vh;
+}
+#logins{
+    display: flex;
+    min-height: 90vh;
+    justify-content: space-around;
+    align-items: center;
+}
+table,tr,td{
+    padding: 10px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: large;
+    text-align: center;
+    font-weight: 400;
+    color: white
+}
+input{
+    height: 20px;
+    padding: 6px;
+    border-radius: 20px;
+}
+.login_div{
+    border: 1px solid #504B43;
+    padding: 80px 20px 80px 20px;
+    border-radius: 15px;
+    background-color:#001242;
+}
+

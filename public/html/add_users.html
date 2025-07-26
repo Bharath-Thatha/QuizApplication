@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Users</title>
+    <link rel="stylesheet" href="/css/comp_style.css">
+    <style>
+        #selected {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            border: 1px solid white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div>
+            <h2>Gradious</h2>
+            <div id="ass"><a href="/comp_dashboard">Assessments</a></div>
+        </div>
+        <div>
+            <div id="selected"><a href="add_users.html">Add Users</a></div>
+            <div>Profile</div>
+            <div><a href="/logout" style="color: white; text-decoration: none;">Logout</a></div>
+        </div>
+    </div>
+
+    <div id="right_section">
+        <div>
+            <div id="right">
+                <div>
+                    <form onsubmit="validate(event)" action="/add_users" method="post">
+                        <div class="form-container">
+                            <div class="form-group">
+                                <h1>Enter Details</h1>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" placeholder="Enter your Name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="emp_id">Employee ID</label>
+                                <input type="text" name="emp_id" id="emp_id" placeholder="Enter Employee ID">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email ID</label>
+                                <input type="email" name="email" id="email" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label for="pass">Set Password</label>
+                                <input type="password" name="pass" id="pass" placeholder="Set Password">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Confirm Password</label>
+                                <input type="password" name="confirmpass" id="confirmpass" placeholder="Enter Same Password">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <div class="radio-group">
+                                    <input type="radio" name="gender" id="Male" class="radio" value="Male">
+                                    <label for="Male" class="radio_text">Male</label>
+                                    <input type="radio" name="gender" id="Female" class="radio" value="Female">
+                                    <label for="Female" class="radio_text">Female</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ph">Phone Number</label>
+                                <input type="text" name="phone" id="phone" placeholder="Enter Mobile Number">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="date">Date of Joining</label>
+                                <input type="date" name="date" id="date">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Type Of User</label>
+                                <div class="radio-group">
+                                    <input type="radio" name="user_type" id="emp" class="radio" value="emp">
+                                    <label for="emp" class="radio_text">Employee</label>
+                                    <input type="radio" name="user_type" id="admin" class="radio" value="admin">
+                                    <label for="admin" class="radio_text">Admin</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="display: flex; justify-content: center;">
+                                <input type="submit" value="Add" id="add_user" >
+                            </div>
+
+                            <div class="form-group" style="display: flex; color: red;">
+                                 <p id="invalid_msg" name="invalid_msg"></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+
+        <!-- File Should be uploaded to add multiple data -->
+
+    </div>
+
+    <script>
+        function validate(ev){
+            const pass = document.getElementById('pass').value;
+            const confirmpass = document.getElementById('confirmpass').value;
+            console.log(pass);
+            if(pass != confirmpass){
+                ev.preventDefault();
+                document.getElementById('invalid_msg').innerHTML="Password didn't Match";
+            }
+        }
+
+    </script>
+</body>
+
+</html>

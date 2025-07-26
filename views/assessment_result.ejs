@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Result - <%= result.assessment_name %></title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 2rem;
+        }
+        .result-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .result-header {
+            background-color: #001242;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .result-header h1 {
+            margin: 0 0 1rem 0;
+            font-size: 2rem;
+        }
+        .result-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+        .passed {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result-details {
+            padding: 2rem;
+        }
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .score-card {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #001242;
+        }
+        .score-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #001242;
+            font-size: 1rem;
+        }
+        .score-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #001242;
+        }
+        .score-card .label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #28a745 0deg <%= result.percentage * 3.6 %>deg,
+                #e0e0e0 <%= result.percentage * 3.6 %>deg 360deg
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            position: relative;
+        }
+        .progress-circle::before {
+            content: '';
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .progress-circle .percentage {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #001242;
+        }
+        .assessment-info {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        .assessment-info h3 {
+            margin: 0 0 1rem 0;
+            color: #001242;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .info-value {
+            color: #001242;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+        }
+        .btn {
+            background-color: #001242;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #002a5c;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <div class="result-header">
+            <h1>Assessment Completed!</h1>
+            <p><%= result.assessment_name %></p>
+            <div class="result-status <%= result.passed ? 'passed' : 'failed' %>">
+                <%= result.passed ? 'PASSED' : 'FAILED' %>
+            </div>
+        </div>
+        
+        <div class="result-details">
+            <div class="score-summary">
+                <div class="score-card">
+                    <div class="progress-circle">
+                        <div class="percentage"><%= result.percentage %>%</div>
+                    </div>
+                    <div class="label">Overall Score</div>
+                </div>
+                
+                <div class="score-card">
+                    <h3>Questions Answered</h3>
+                    <div class="value"><%= result.correct_answers %>/<%= result.total_questions %></div>
+                    <div class="label">Correct Answers</div>
+                </div>
+                
+                <div class="score-card">
+                    <h3>Marks Obtained</h3>
+                    <div class="value"><%= result.obtained_marks %>/<%= result.total_marks %></div>
+                    <div class="label">Total Marks</div>
+                </div>
+                
+                <div class="score-card">
+                    <h3>Passing Marks</h3>
+                    <div class="value"><%= result.passing_marks %></div>
+                    <div class="label">Required to Pass</div>
+                </div>
+            </div>
+            
+            <div class="assessment-info">
+                <h3>Assessment Details</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Assessment ID:</span>
+                        <span class="info-value"><%= result.assessment_id %></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Submitted At:</span>
+                        <span class="info-value"><%= new Date(result.submitted_at).toLocaleString() %></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Questions:</span>
+                        <span class="info-value"><%= result.total_questions %></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span>
+                        <span class="info-value"><%= result.passed ? 'Passed' : 'Failed' %></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="javascript:window.print()" class="btn btn-secondary">Print Result</a>
+                <!-- <a href="javascript:window.close()" class="btn">Close</a> -->
+                <a href="/emp_dashboard/<%= user_email %>" class="btn">Close</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        if (window.opener) {
+            setTimeout(() => {
+                if (confirm('Would you like to close this result window?')) {
+                    window.close();
+                }
+            }, 30000);
+        }
+    </script>
+</body>
+</html>
+

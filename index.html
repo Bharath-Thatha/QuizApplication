@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Login</title>
+</head>
+<body>
+    <div id="header">
+        <label>Skill Check</label>
+    </div>
+    <div id="logins">
+        <div id="emp_login">
+            <div class="login_div">
+                <form action="/emp_dashboard" method="post">
+                    <table>
+                        <tr>
+                            <td colspan="2" style="font-size: xx-large;">Employee Login</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">Email</td>
+                            <td><input type="text" id="emp_mail" name="emp_mail" placeholder="Enter the Email" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">Password</td>
+                            <td><input type="password" id="emp_pass" name="emp_pass" placeholder="Enter the Password"
+                                    required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span><input type="submit" value="login" id="emp_login" style="height: 30px; width: 80px; font-weight:600; color:#001242;"></td></span>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div id="vertical_line"></div>
+        <div id="company_login">
+            <div class="login_div">
+                <form action="/comp_dashboard" method="post">
+                    <table>
+                        <tr>
+                            <td colspan="2" style="font-size: xx-large;">Admin Login</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">Email</td>
+                            <td><input type="text" id="admin_mail" name="admin_mail" placeholder="Enter the Email" required></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">Password</td>
+                            <td><input type="password" id="admin_pass" name="admin_pass" placeholder="Enter the Password" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><input type="submit" value="Login" id="admin_login"
+                                    style="height: 30px; width: 80px; font-weight:600 ; color:#001242;"></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

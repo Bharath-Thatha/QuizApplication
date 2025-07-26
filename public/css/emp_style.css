@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  font-family: "Times New Roman", Times, serif;
+  background-color: #f4f4f4;
+  /* height: 100vh; */
+}
+.sidebar {
+  width: 250px;
+  background-color: #001242;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
+  float: left;
+}
+.sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+.sidebar div div{
+  display: block;
+  color: white;
+  text-decoration: none;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+.sidebar a{
+  text-decoration: none;
+  color: white;
+}
+.sidebar div div:hover {
+  border: 1px solid white;
+  border-radius: 4px;
+}
+.main-content {
+  margin-left: 260px;
+  padding: 2rem;
+}
+.main-content > div > h1{
+  color: #001242;
+}
+.assessment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+.assessment-card {
+  background-color: #e0e0e0;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* transition: 1.5 ms; */
+}
+/* .assessment-card:hover {
+ transform: scale(1.05);
+} */
+.assessment-card h3 {
+  margin-top: 0;
+  color: #001242;
+}
+.assessment-card p {
+  margin: 0.5rem 0;
+}
+.header-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+.header-action button {
+  background-color: transparent;
+  border: 2px solid #001242;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #001242;
+  padding: 0.5rem 1rem;
+}
+.status-label {
+  background-color: #aaa;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  /* position: absolute;
+  bottom: 1rem;
+  right: 1rem; */
+}
+.assessment-card a{
+  text-decoration: none;
+  color: blue;
+  cursor: pointer;
+}
+.assessment-card div {
+  display: flex;
+  justify-content: right; 
+
+}
+/* .assessment-card a:hover{
+  text-decoration: underline;
+  cursor: pointer;
+} */
+
+#details1{
+  display: flex;
+  width: 75vw;
+  justify-content: space-between;
+}
+.main-content button{
+  padding: 5px;
+  background-color: #001242;
+  color: white;
+  border-radius: 8px;
+}

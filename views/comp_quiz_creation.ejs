@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Assessment</title>
+  <link rel="stylesheet" href="/css/creation.css">
+</head>
+<body>
+  <form id="assessmentForm" action="/create_assessment" method="POST">
+    <div style="display: flex;">
+      <div class="sidebar">
+        <h2>Company Name</h2>
+        <label>Assessment Name:
+          <input type="text" name="assessment_name" required>
+        </label>
+        <label>Total Questions:
+          <input type="number" id="totalQuestions" name="total_questions" min="1" value="1" required>
+        </label>
+        <label>Points per Question:
+          <input type="number" name="points_per_question" min="1" value="1" required>
+        </label>
+        <label>Passing Marks:
+          <input type="number" name="passing_marks" min="1" required>
+        </label>
+        <label>Time Limit (minutes):
+          <input type="number" name="time_limit" min="1" required>
+        </label>
+        <label>Start Date:
+          <input type="date" name="start_date" required>
+        </label>
+        <label>End Date:
+          <input type="date" name="end_date" required>
+        </label>
+        <label>Publish To:
+          <select name="published_to" required>
+            <option value="all">All Employees</option>
+            <option value="specific">Specific Employees</option>
+          </select>
+        </label>
+        <div id="specificEmployees" style="display: none;">
+          <label>Employee Emails (comma separated):
+            <textarea name="employee_emails" placeholder="email1@company.com, email2@company.com"></textarea>
+          </label>
+        </div>
+      </div>
+      <div class="main-content"  style="min-width: 80vw; display: flex; justify-content: center;">
+        <div>
+
+          <div class="form-title">Create New Assessment</div>
+
+          <div id="questionsContainer">
+            <div class="question-box" data-question="1">
+              <p><strong>Question 1</strong></p>
+              <textarea name="questions[0][question]" placeholder="Enter your question here..." required></textarea>
+
+              <div class="option-group">
+                <input type="radio" name="questions[0][answer]" value="0" required>
+                <label>Option A:</label>
+                <input type="text" name="questions[0][options][0]" placeholder="Option A" required>
+              </div>
+
+              <div class="option-group">
+                <input type="radio" name="questions[0][answer]" value="1" required>
+                <label>Option B:</label>
+                <input type="text" name="questions[0][options][1]" placeholder="Option B" required>
+              </div>
+
+              <div class="option-group">
+                <input type="radio" name="questions[0][answer]" value="2" required>
+                <label>Option C:</label>
+                <input type="text" name="questions[0][options][2]" placeholder="Option C" required>
+              </div>
+
+              <div class="option-group">
+                <input type="radio" name="questions[0][answer]" value="3" required>
+                <label>Option D:</label>
+                <input type="text" name="questions[0][options][3]" placeholder="Option D" required>
+              </div>
+
+              <div class="btn-group">
+                <button type="button" onclick="removeQuestion(1)" class="remove-question">Remove Question</button>
+              </div>
+            </div>
+          </div>
+          <div class="footer-buttons">
+            <div >
+              <button type="button" onclick="addQuestion()">Add Question</button>
+            </div>
+            
+            <div >
+              <button type="submit">Create Assessment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    let questionCount = 1;
+
+    document.querySelector('select[name="published_to"]').addEventListener('change', function () {
+      const specificDiv = document.getElementById('specificEmployees');
+      if (this.value === 'specific') {
+        specificDiv.style.display = 'block';
+      } else {
+        specificDiv.style.display = 'none';
+      }
+    });
+
+    document.getElementById('totalQuestions').addEventListener('change', function () {
+      const targetCount = parseInt(this.value);
+      const currentCount = document.querySelectorAll('.question-box').length;
+
+      if (targetCount > currentCount) {
+        for (let i = currentCount; i < targetCount; i++) {
+          addQuestion();
+        }
+      } else if (targetCount < currentCount) {
+        const questions = document.querySelectorAll('.question-box');
+        for (let i = currentCount - 1; i >= targetCount; i--) {
+          questions[i].remove();
+        }
+        questionCount = targetCount;
+      }
+    });
+
+    function addQuestion() {
+      questionCount++;
+      const container = document.getElementById('questionsContainer');
+      const questionDiv = document.createElement('div');
+      questionDiv.className = 'question-box';
+      questionDiv.setAttribute('data-question', questionCount);
+
+      questionDiv.innerHTML = `
+        <p><strong>Question ${questionCount}</strong></p>
+        <textarea name="questions[${questionCount - 1}][question]" placeholder="Enter your question here..." required></textarea>
+        
+        <div class="option-group">
+          <input type="radio" name="questions[${questionCount - 1}][answer]" value="0" required>
+          <label>Option A:</label>
+          <input type="text" name="questions[${questionCount - 1}][options][0]" placeholder="Option A" required>
+        </div>
+        
+        <div class="option-group">
+          <input type="radio" name="questions[${questionCount - 1}][answer]" value="1" required>
+          <label>Option B:</label>
+          <input type="text" name="questions[${questionCount - 1}][options][1]" placeholder="Option B" required>
+        </div>
+        
+        <div class="option-group">
+          <input type="radio" name="questions[${questionCount - 1}][answer]" value="2" required>
+          <label>Option C:</label>
+          <input type="text" name="questions[${questionCount - 1}][options][2]" placeholder="Option C" required>
+        </div>
+        
+        <div class="option-group">
+          <input type="radio" name="questions[${questionCount - 1}][answer]" value="3" required>
+          <label>Option D:</label>
+          <input type="text" name="questions[${questionCount - 1}][options][3]" placeholder="Option D" required>
+        </div>
+        
+        <div class="btn-group">
+          <button type="button" onclick="removeQuestion(${questionCount})" class="remove-question">Remove Question</button>
+        </div>
+      `;
+
+      container.appendChild(questionDiv);
+      document.getElementById('totalQuestions').value = questionCount;
+    }
+
+    function removeQuestion(questionNum) {
+      if (questionCount > 1) {
+        const questionBox = document.querySelector(`[data-question="${questionNum}"]`);
+        questionBox.remove();
+        questionCount--;
+        document.getElementById('totalQuestions').value = questionCount;
+
+        // Renumber remaining questions
+        const questions = document.querySelectorAll('.question-box');
+        questions.forEach((question, index) => {
+          const questionNumber = index + 1;
+          question.setAttribute('data-question', questionNumber);
+          question.querySelector('p strong').textContent = `Question ${questionNumber}`;
+
+          // Update form field names
+          const textarea = question.querySelector('textarea');
+          textarea.name = `questions[${index}][question]`;
+
+          const radios = question.querySelectorAll('input[type="radio"]');
+          radios.forEach(radio => {
+            radio.name = `questions[${index}][answer]`;
+          });
+
+          const textInputs = question.querySelectorAll('input[type="text"]');
+          textInputs.forEach((input, optionIndex) => {
+            input.name = `questions[${index}][options][${optionIndex}]`;
+          });
+
+          const removeBtn = question.querySelector('.remove-question');
+          removeBtn.setAttribute('onclick', `removeQuestion(${questionNumber})`);
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>

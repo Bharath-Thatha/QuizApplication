@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="/css/emp_style.css">
+  <link rel="stylesheet" href="/css/popup.css">
+  <style>
+    .status-not-started { background-color: #6c757d; }
+    .status-completed { background-color: #28a745; }
+    .status-in-progress { background-color: #ffc107; color: #000; }
+
+    .take-test-btn {
+      background-color: #001242;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    .take-test-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .date-info {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .expired {
+      opacity: 0.6;
+    }
+
+    .expired .take-test-btn {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 1024px) {
+      .assessment-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .assessment-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <div>
+      <h2>Welcome, <%= user.name %></h2>
+      <div id="selected">Assessments</div>
+    </div>
+    <div>
+      <div><a href="/emp_profile/<%= user.emp_mail %>">Profile</a></div>
+      <div><a href="/">Logout</a></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>Available Assessments</h1>
+
+    <% if (availableAssessments.length > 0) { %>
+      <h2>Available Now</h2>
+      <div class="assessment-grid">
+        <% availableAssessments.forEach(assessment => { %>
+          <div class="assessment-card">
+            <h3><%= assessment.assessment_name %></h3>
+            <p><strong>Assessment ID:</strong> <%= assessment.id %></p>
+            <p><strong>Total Questions:</strong> <%= assessment.total_questions %></p>
+            <p><strong>Total Marks:</strong> <%= assessment.total_marks %></p>
+            <p><strong>Passing Marks:</strong> <%= assessment.passing_marks %></p>
+            <p><strong>Time Limit:</strong> <%= assessment.time_limit %> minutes</p>
+            <p class="date-info"><strong>Available Until:</strong> <%= new Date(assessment.end_date).toLocaleDateString() %></p>
+
+            <% if (assessment.status === 'Not Started') { %>
+              <button class="take-test-btn"
+                onclick="confirmStartAssessment('<%= assessment.id %>', '<%= user.emp_mail %>', '<%= assessment.assessment_name %>', '<%= assessment.time_limit %>')">
+                Take Assessment
+              </button>
+            <% } else if (assessment.status === 'Completed') { %>
+              <button class="take-test-btn" disabled>Assessment Completed</button>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (upcomingAssessments.length > 0) { %>
+      <h2>Upcoming Assessments</h2>
+      <div class="assessment-grid">
+        <% upcomingAssessments.forEach(assessment => { %>
+          <div class="assessment-card">
+            <h3><%= assessment.assessment_name %></h3>
+            <p><strong>Assessment ID:</strong> <%= assessment.id %></p>
+            <p><strong>Total Questions:</strong> <%= assessment.total_questions %></p>
+            <p><strong>Total Marks:</strong> <%= assessment.total_marks %></p>
+            <p><strong>Time Limit:</strong> <%= assessment.time_limit %> minutes</p>
+            <p class="date-info"><strong>Available From:</strong> <%= new Date(assessment.start_date).toLocaleDateString() %></p>
+            <p class="date-info"><strong>Available Until:</strong> <%= new Date(assessment.end_date).toLocaleDateString() %></p>
+            <div class="status-label">Upcoming</div>
+            <button class="take-test-btn" disabled>Not Yet Available</button>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (expiredAssessments.length > 0) { %>
+      <h2>Expired Assessments</h2>
+      <div class="assessment-grid">
+        <% expiredAssessments.forEach(assessment => { %>
+          <div class="assessment-card expired">
+            <h3><%= assessment.assessment_name %></h3>
+            <p><strong>Assessment ID:</strong> <%= assessment.id %></p>
+            <p><strong>Total Questions:</strong> <%= assessment.total_questions %></p>
+            <p><strong>Total Marks:</strong> <%= assessment.total_marks %></p>
+            <p class="date-info"><strong>Expired On:</strong> <%= new Date(assessment.end_date).toLocaleDateString() %></p>
+            <div class="status-label">Expired</div>
+            <button class="take-test-btn" disabled>Assessment Expired</button>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (
+      availableAssessments.length === 0 &&
+      upcomingAssessments.length === 0 &&
+      expiredAssessments.length === 0
+    ) { %>
+      <div class="assessment-card">
+        <h3>No Assessments Found</h3>
+        <p>You have no assessments assigned to you at this time.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmationModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Start Assessment</h2>
+        <span class="close" onclick="closeConfirmationModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <h3 id="assessmentTitle"></h3>
+        <div class="assessment-info">
+          <p><strong>Time Limit:</strong> <span id="timeLimit"></span> minutes</p>
+          <p><strong>Instructions:</strong></p>
+          <ul>
+            <li>Once you start the assessment, the timer will begin immediately</li>
+            <li>You cannot pause or restart the assessment once started</li>
+            <li>Make sure you have a stable internet connection</li>
+            <li>The assessment will auto-submit when time expires</li>
+            <li>You can navigate between questions during the assessment</li>
+          </ul>
+        </div>
+        <div class="warning-message">
+          <strong>Warning:</strong> You can only take this assessment once. Make sure you're ready before proceeding.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="closeConfirmationModal()">Cancel</button>
+        <button class="confirm-btn" id="startAssessmentBtn">Start Assessment</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function confirmStartAssessment(assessmentId, userEmail, assessmentName, timeLimit) {
+      document.getElementById('assessmentTitle').textContent = assessmentName;
+      document.getElementById('timeLimit').textContent = timeLimit;
+      document.getElementById('confirmationModal').style.display = 'flex';
+
+      document.getElementById('startAssessmentBtn').onclick = function () {
+        window.location.href = `/assessment/test/${assessmentId}/${userEmail}`;
+      };
+    }
+
+    function closeConfirmationModal() {
+      document.getElementById('confirmationModal').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById('confirmationModal');
+      if (event.target === modal) {
+        closeConfirmationModal();
+      }
+    };
+  </script>
+</body>
+</html>

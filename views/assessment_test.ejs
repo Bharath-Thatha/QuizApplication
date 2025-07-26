@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= assessment.assessment_name %> - Assessment Test</title>
+    <link rel="stylesheet" href="../css/assessment_test.css">
+    <style>
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #001242;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        .timer.warning {
+            background-color: #dc3545;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        .question-container {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #001242;
+        }
+        .question-number {
+            color: #001242;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .options-container {
+            margin: 1rem 0;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            margin: 0.8rem 0;
+            padding: 0.8rem;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .option:hover {
+            border-color: #001242;
+            background-color: #f0f8ff;
+        }
+        .option.selected {
+            border-color: #001242;
+            background-color: #e6f3ff;
+        }
+        .option input[type="radio"] {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 1rem;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            padding: 1rem 0;
+            border-top: 2px solid #e0e0e0;
+        }
+        .nav-btn {
+            background-color: #001242;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        .nav-btn:hover {
+            background-color: #002a5c;
+        }
+        .nav-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .submit-btn {
+            background-color: #28a745;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .assessment-header {
+            background-color: #001242;
+            color: white;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        .assessment-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s ease;
+        }
+        .question-status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .status-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .status-dot.unanswered {
+            background-color: #e0e0e0;
+            color: #666;
+        }
+        .status-dot.answered {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-dot.current {
+            border-color: #001242;
+            box-shadow: 0 0 0 2px #001242;
+        }
+        .warning-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+        }
+        .modal-buttons {
+            margin-top: 1rem;
+        }
+        .modal-btn {
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .confirm-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">
+        Time Remaining: <span id="timeDisplay"><%= assessment.time_limit %>:00</span>
+    </div>
+
+    <div class="assessment-header">
+        <div class="assessment-info">
+            <div>
+                <h1><%= assessment.assessment_name %></h1>
+                <p>Total Questions: <%= assessment.total_questions %> | Total Marks: <%= assessment.total_marks %> | Time Limit: <%= assessment.time_limit %> minutes</p>
+            </div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="question-status" id="questionStatus">
+            <% for (let i = 1; i <= assessment.total_questions; i++) { %>
+                <div class="status-dot unanswered <%= i === 1 ? 'current' : '' %>" onclick="goToQuestion(<%= i %>)">
+                    <%= i %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <form id="assessmentForm" action="/submit_assessment" method="POST">
+        <input type="hidden" name="assessment_id" value="<%= assessment.id %>">
+        <input type="hidden" name="user_email" value="<%= user_email %>">
+        
+        <% assessment.assessment.forEach((question, index) => { %>
+            <div class="question-container" id="question<%= index + 1 %>" style="<%= index === 0 ? 'display: block;' : 'display: none;' %>">
+                <div class="question-number">Question <%= index + 1 %> of <%= assessment.total_questions %></div>
+                <div class="question-text"><%= question.question %></div>
+                
+                <div class="options-container">
+                    <% question.options.forEach((option, optionIndex) => { %>
+                        <div class="option" onclick="selectOption(<%= index + 1 %>, <%= optionIndex %>)">
+                            <input type="radio" name="answers[<%= index %>]" value="<%= optionIndex %>" id="q<%= index + 1 %>_opt<%= optionIndex %>">
+                            <label for="q<%= index + 1 %>_opt<%= optionIndex %>"><%= String.fromCharCode(65 + optionIndex) %>. <%= option %></label>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        <% }); %>
+
+        <div class="navigation-buttons">
+            <button type="button" class="nav-btn" id="prevBtn" onclick="previousQuestion()" disabled>Previous</button>
+            <div>
+                <button type="button" class="nav-btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+                <button type="button" class="nav-btn submit-btn" id="submitBtn" onclick="showSubmitModal()" style="display: none;">Submit Assessment</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="warning-modal" id="submitModal">
+        <div class="modal-content">
+            <h3>Submit Assessment?</h3>
+            <p>Are you sure you want to submit your assessment? You cannot change your answers after submission.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm-btn" onclick="submitAssessment()">Yes, Submit</button>
+                <button class="modal-btn cancel-btn" onclick="hideSubmitModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = <%= assessment.total_questions %>;
+        const timeLimit = <%= assessment.time_limit %> * 60; // Convert to seconds
+        let timeRemaining = timeLimit;
+        let timerInterval;
+        let answers = {};
+
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 300) { // 5 minutes warning
+                    document.getElementById('timer').classList.add('warning');
+                }
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time is up! Your assessment will be submitted automatically.');
+                    submitAssessment();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timeDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function selectOption(questionNum, optionIndex) {
+            // Update visual selection
+            const questionContainer = document.getElementById(`question${questionNum}`);
+            const options = questionContainer.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            // Update radio button
+            document.getElementById(`q${questionNum}_opt${optionIndex}`).checked = true;
+            
+            // Store answer
+            answers[questionNum - 1] = optionIndex;
+            
+            // Update question status
+            updateQuestionStatus();
+            updateProgress();
+        }
+
+        function updateQuestionStatus() {
+            const statusDots = document.querySelectorAll('.status-dot');
+            statusDots.forEach((dot, index) => {
+                dot.classList.remove('current');
+                if (answers.hasOwnProperty(index)) {
+                    dot.classList.remove('unanswered');
+                    dot.classList.add('answered');
+                } else {
+                    dot.classList.remove('answered');
+                    dot.classList.add('unanswered');
+                }
+            });
+            
+            // Mark current question
+            statusDots[currentQuestion - 1].classList.add('current');
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(answers).length;
+            const progressPercentage = (answeredCount / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progressPercentage + '%';
+        }
+
+        function goToQuestion(questionNum) {
+            if (questionNum >= 1 && questionNum <= totalQuestions) {
+                // Hide current question
+                document.getElementById(`question${currentQuestion}`).style.display = 'none';
+                
+                // Show target question
+                document.getElementById(`question${questionNum}`).style.display = 'block';
+                
+                currentQuestion = questionNum;
+                updateNavigationButtons();
+                updateQuestionStatus();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                goToQuestion(currentQuestion + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                goToQuestion(currentQuestion - 1);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.disabled = currentQuestion === 1;
+            
+            if (currentQuestion === totalQuestions) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function showSubmitModal() {
+            const unansweredCount = totalQuestions - Object.keys(answers).length;
+            if (unansweredCount > 0) {
+                if (!confirm(`You have ${unansweredCount} unanswered questions. Do you want to submit anyway?`)) {
+                    return;
+                }
+            }
+            document.getElementById('submitModal').style.display = 'block';
+        }
+
+        function hideSubmitModal() {
+            document.getElementById('submitModal').style.display = 'none';
+        }
+
+        function submitAssessment() {
+            clearInterval(timerInterval);
+            
+            // Set all answers in the form
+            for (let i = 0; i < totalQuestions; i++) {
+                if (answers.hasOwnProperty(i)) {
+                    const radio = document.querySelector(`input[name="answers[${i}]"][value="${answers[i]}"]`);
+                    if (radio) radio.checked = true;
+                }
+            }
+            
+            document.getElementById('assessmentForm').submit();
+        }
+
+        // Prevent page refresh/back button
+        window.addEventListener('beforeunload', function (e) {
+            if (timeRemaining > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Initialize
+        startTimer();
+        updateNavigationButtons();
+        updateQuestionStatus();
+        
+        // Restore any previously selected answers
+        document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+            const questionMatch = radio.name.match(/answers\[(\d+)\]/);
+            if (questionMatch) {
+                const questionIndex = parseInt(questionMatch[1]);
+                answers[questionIndex] = parseInt(radio.value);
+                
+                // Update visual selection
+                const option = radio.closest('.option');
+                if (option) option.classList.add('selected');
+            }
+        });
+        
+        updateProgress();
+    </script>
+</body>
+</html>
+

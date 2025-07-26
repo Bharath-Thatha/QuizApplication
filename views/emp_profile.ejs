@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Profile</title>
+  <link rel="stylesheet" href="/css/emp_style.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <style>
+    #selected {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border: 1px solid white;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <div>
+      <h2>Welcome, <%= user.name %>
+      </h2>
+      <div><a href="/emp_dashboard/<%= user.emp_mail %>" style="color: white; text-decoration: none;">Assessments</a>
+      </div>
+    </div>
+    <div>
+      <div id="selected">Profile</div>
+      <div><a href="/" style="color: white; text-decoration: none;">Logout</a></div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="profile-container">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <%= user.name.charAt(0).toUpperCase() %>
+        </div>
+        <h1>
+          <%= user.name %>
+        </h1>
+        <p>Employee</p>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-section">
+          <h3>Personal Information</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Full Name:</span>
+              <span class="detail-value">
+                <%= profile.name %>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Employee ID:</span>
+              <span class="detail-value">
+                <%= profile.emp_id %>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">
+                <%= profile.email %>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Gender:</span>
+              <span class="detail-value">
+                <%= profile.gender %>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">
+                <%= profile.phone %>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Date of Joining:</span>
+              <span class="detail-value">
+                <%= new Date(profile.date).toLocaleDateString() %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Assessment Statistics</h3>
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-number">
+                <%= stats.totalAssessments %>
+              </div>
+              <div class="stat-label">Total Assessments</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">
+                <%= stats.completedAssessments %>
+              </div>
+              <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">
+                <%= stats.pendingAssessments %>
+              </div>
+              <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">
+                <%= stats.passedAssessments %>
+              </div>
+              <div class="stat-label">Passed</div>
+            </div>
+          </div>
+        </div>
+
+        <% if (stats.recentResults && stats.recentResults.length> 0) { %>
+          <div class="detail-section">
+            <h3>Recent Assessment Results</h3>
+            <div class="detail-grid">
+              <% stats.recentResults.forEach(result=> { %>
+                <div class="detail-item">
+                  <span class="detail-label">
+                    <%= result.assessment_name %>:
+                  </span>
+                  <span class="detail-value" style="color: <%= result.passed ? '#28a745' : '#dc3545' %>">
+                    <%= result.percentage %>% (<%= result.passed ? 'Passed' : 'Failed' %>)
+                  </span>
+                </div>
+                <% }); %>
+            </div>
+          </div>
+          <% } %>
+
+            <div style="text-align: center;">
+              <a href="/emp_dashboard/<%= user.emp_mail %>" class="back-btn">Back to Dashboard</a>
+              <button class="edit-btn" onclick="editProfile()">Edit Profile</button>
+            </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function editProfile() {
+      alert('Profile editing functionality will be implemented in the next version.');
+    }
+  </script>
+</body>
+
+</html>
